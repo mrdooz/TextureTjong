@@ -191,6 +191,8 @@ void paint(HWND hwnd)
   // Copy the bits from the memory DC into the current dc
   BitBlt(hDC, 0, 0, bm.bmWidth, bm.bmHeight, MemDCExercising, 0, 0, SRCCOPY);
 
+
+
   // Restore the old bitmap
   DeleteDC(MemDCExercising);
   DeleteObject(bmpExercising);

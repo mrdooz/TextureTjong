@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TextureTjong", "TextureTjong.vcproj", "{6A833999-A89A-49DE-9E87-0A51CD4C26D6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CD3B2496-BA09-41A7-BBDC-BF42B3F513DE} = {CD3B2496-BA09-41A7-BBDC-BF42B3F513DE}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "texture_ext", "TextureLib\TextureLib.vcproj", "{CD3B2496-BA09-41A7-BBDC-BF42B3F513DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A833999-A89A-49DE-9E87-0A51CD4C26D6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6A833999-A89A-49DE-9E87-0A51CD4C26D6}.Debug|Win32.Build.0 = Debug|Win32
+		{6A833999-A89A-49DE-9E87-0A51CD4C26D6}.Release|Win32.ActiveCfg = Release|Win32
+		{6A833999-A89A-49DE-9E87-0A51CD4C26D6}.Release|Win32.Build.0 = Release|Win32
+		{CD3B2496-BA09-41A7-BBDC-BF42B3F513DE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CD3B2496-BA09-41A7-BBDC-BF42B3F513DE}.Debug|Win32.Build.0 = Debug|Win32
+		{CD3B2496-BA09-41A7-BBDC-BF42B3F513DE}.Release|Win32.ActiveCfg = Release|Win32
+		{CD3B2496-BA09-41A7-BBDC-BF42B3F513DE}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

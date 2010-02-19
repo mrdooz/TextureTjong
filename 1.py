@@ -12,10 +12,11 @@ t.single_color(t.Color(1,1,0.5,0), big_red2)
 t.mixer(big_red, big_green, 0, a)
 for i in xrange(0, 100):
 	a.set_pixel(i, i, black)
-	
+
+a2 = t.Texture(512, 512)	
 o = t.Texture(512, 512)
-t.radial(1, a)
-t.displace(a, a, 1, o)
+t.radial(1, a2)
+t.displace(a2, a2, 1, o)
 
 o2 = t.Texture(512, 512)
 

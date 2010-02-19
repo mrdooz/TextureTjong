@@ -2,7 +2,7 @@
 #define UTILS_HPP
 
 template<typename T>
-T exch_null(T& t) { T tmp = t; t = NULL; return tmp; }
+T xchg_null(T& t) { T tmp = t; t = NULL; return tmp; }
 
 template<typename T>
 T clamp(T value, T min_value, T max_value)

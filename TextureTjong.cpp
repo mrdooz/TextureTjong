@@ -2,6 +2,32 @@
 //
 
 #include "stdafx.h"
+#include <vector>
+#include "TextureLib/Texture.hpp"
+#include "TextureLib/TextureLib.hpp"
+
+typedef std::vector<const Texture*> Textures;
+Textures textures;
+
+extern "C"
+{
+  void texture_create(const Texture* texture)
+  {
+    textures.push_back(texture);
+
+  }
+
+  void texture_delete(const Texture* texture)
+  {
+    for (Textures::iterator i = textures.begin(), e = textures.end(); i != e; ++i) {
+      if (*i == texture) {
+        textures.erase(i);
+        return;
+      }
+    }
+
+  }
+}
 
 namespace py = boost::python;
 
@@ -10,6 +36,7 @@ py::object main_namespace;
 
 LPCTSTR ClsName = L"BasicApp";
 LPCTSTR WndName = L"A Simple Window";
+
 
 LRESULT CALLBACK WndProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -157,6 +184,18 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
   const UINT timer_id = SetTimer(hWnd, 1, 1000, NULL);
 
+  HMODULE texture_ext = LoadLibrary(_T("texture_ext.pyd"));
+
+  pfnSetTextureInit set_texture_init = (pfnSetTextureInit)GetProcAddress(texture_ext, "setTextureInit");
+  pfnSetTextureClose set_texture_close = (pfnSetTextureClose)GetProcAddress(texture_ext, "setTextureClose");
+
+  if (set_texture_init == 0 || set_texture_close == 0) {
+    return 1;
+  }
+
+  set_texture_init(texture_create);
+  set_texture_close(texture_delete);
+
   MSG msg;
   while( GetMessage(&msg, NULL, 0, 0) )
   {
@@ -166,42 +205,82 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
   KillTimer(hWnd, timer_id);
 
+  FreeLibrary(texture_ext);
+
   return msg.wParam;
+}
+
+uint8_t* downsample(const Texture* t, const int32_t width, const int32_t height)
+{
+  uint32_t* data = new uint32_t[width*height];
+  uint8_t* ptr = (uint8_t*)data;
+
+  for (int i = 0; i < height; ++i) {
+    for (int j = 0; j < width; ++j) {
+      *data++ = t->at((float)j/(width-1), (float)i/(height-1));
+    }
+  }
+
+  return (uint8_t*)ptr;
 }
 
 void paint(HWND hwnd)
 {
-  HDC hDC, MemDCExercising;
   PAINTSTRUCT Ps;
-  HBITMAP bmpExercising;
+  HDC hDC = BeginPaint(hwnd, &Ps);
 
-  hDC = BeginPaint(hwnd, &Ps);
+  const int thumbnail_size = 128;
 
+  BITMAPINFO bm_info;
+  ZeroMemory(&bm_info, sizeof(bm_info));
+  bm_info.bmiHeader.biSize = sizeof(bm_info.bmiHeader);
+  bm_info.bmiHeader.biWidth = thumbnail_size;
+  bm_info.bmiHeader.biHeight = thumbnail_size;
+  bm_info.bmiHeader.biPlanes = 1;
+  bm_info.bmiHeader.biBitCount = 32;
+  bm_info.bmiHeader.biCompression = BI_RGB;
+
+  const int spacing = 10;
+  int x_pos = spacing, y_pos = spacing;
+  for (size_t i = 0; i < textures.size(); ++i) {
+    if (x_pos + thumbnail_size > Ps.rcPaint.right) {
+      x_pos = spacing;
+      y_pos += thumbnail_size + spacing;
+    }
+
+    const Texture* t = textures[i];
+    uint8_t* downsampled = downsample(t, thumbnail_size, thumbnail_size);
+    SetDIBitsToDevice(hDC, x_pos, y_pos, thumbnail_size, thumbnail_size, 0, 0, 0, thumbnail_size, downsampled, &bm_info, DIB_RGB_COLORS);
+    delete [] downsampled;
+
+    x_pos += thumbnail_size + spacing;
+
+  }
+
+  if (!textures.empty()) {
+  }
+
+/*
   // Load the bitmap from the resource
-  bmpExercising = (HBITMAP)LoadImageA(0, "tjong.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+  HBITMAP bmpExercising = (HBITMAP)LoadImageA(0, "tjong.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
   BITMAP bm;
   ::GetObject (bmpExercising, sizeof (bm), & bm);
 
   // Create a memory device compatible with the above DC variable
-  MemDCExercising = CreateCompatibleDC(hDC);
+  HDC MemDCExercising = CreateCompatibleDC(hDC);
+
   // Select the new bitmap
   SelectObject(MemDCExercising, bmpExercising);
 
   // Copy the bits from the memory DC into the current dc
   BitBlt(hDC, 0, 0, bm.bmWidth, bm.bmHeight, MemDCExercising, 0, 0, SRCCOPY);
 
-
-
   // Restore the old bitmap
   DeleteDC(MemDCExercising);
   DeleteObject(bmpExercising);
+*/
   EndPaint(hwnd, &Ps);
-
-  PAINTSTRUCT psPaint;
-  HDC hdc = BeginPaint( hwnd, &psPaint );
-  // Do painting here
-  EndPaint (hwnd, &psPaint);
 
 }
 

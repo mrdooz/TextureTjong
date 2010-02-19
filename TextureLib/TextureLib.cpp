@@ -1,8 +1,25 @@
 #include "stdafx.h"
+#include "TextureLib.hpp"
 #include "Texture.hpp"
 #include "Utils.hpp"
 #include "Generators.hpp"
 #include "Modifiers.hpp"
+
+pfnTexture texture_create_callback = NULL;
+pfnTexture texture_delete_callback = NULL;
+
+extern "C"
+{
+  __declspec(dllexport) void setTextureInit(pfnTexture pfnInit)
+  {
+    texture_create_callback = pfnInit;
+  }
+
+  __declspec(dllexport) void setTextureClose(pfnTexture pfnClose)
+  {
+    texture_delete_callback = pfnClose;
+  }
+}
 
 BOOST_PYTHON_MODULE(texture_ext)
 {

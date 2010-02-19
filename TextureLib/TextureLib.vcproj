@@ -185,11 +185,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\scoped_ptr.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Texture.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TextureLib.hpp"
 				>
 			</File>
 			<File

@@ -69,6 +69,6 @@ void save_bitmap(const char* filename, const Texture& t)
   fwrite(bmp, total_size, 1, f);
   fclose(f);
 
-  delete[](exch_null(bmp));
+  delete[](xchg_null(bmp));
 
 }

@@ -12,5 +12,6 @@
 #include <boost/python.hpp>
 #pragma warning(pop)
 
+#include "scoped_ptr.h"
 
 #include <d3dx10.h>

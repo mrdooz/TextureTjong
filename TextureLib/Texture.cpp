@@ -1,15 +1,23 @@
 #include "stdafx.h"
 #include "Texture.hpp"
 #include "Utils.hpp"
+#include "TextureLib.hpp"
 
 Texture::Texture() 
   : _data(NULL), _width(0), _height(0) 
 {
+  if (texture_create_callback) {
+    texture_create_callback(this);
+  }
 }
 
 Texture::~Texture()
 {
-  delete [] (exch_null(_data));
+  if (texture_delete_callback) {
+    texture_delete_callback(this);
+  }
+
+  delete [] (xchg_null(_data));
 }
 
 Texture::Texture(const int32_t width, const int32_t height)
@@ -17,12 +25,22 @@ Texture::Texture(const int32_t width, const int32_t height)
   , _height(height)
 {
   init();
+
+  if (texture_create_callback) {
+    texture_create_callback(this);
+  }
+
 }
 
 Texture::Texture(const Texture& t) 
   : _data(NULL)
 {
   *this = t;
+
+  if (texture_create_callback) {
+    texture_create_callback(this);
+  }
+
 }
 
 void Texture::operator=(const Texture& t)
@@ -30,7 +48,7 @@ void Texture::operator=(const Texture& t)
   if (&t == this) {
     return;
   }
-  delete [] (exch_null(_data));
+  delete [] (xchg_null(_data));
   assign(t);
 }
 
@@ -49,14 +67,6 @@ void Texture::assign(const Texture& t)
 }
 
 
-D3DXCOLOR Texture::at(const float x, const float y) const
-{
-  // TOOD: We should really lerp here
-  const int int_x = clamp(x, 0.f, 1.f) * (_width - 1);
-  const int int_y = clamp(y, 0.f, 1.f) * (_height - 1);
-
-  return D3DXCOLOR(*((uint32_t*)_data + int_x + int_y * _width));
-}
 
 void Texture::set_pixel(const int32_t x, const int32_t y, const D3DXCOLOR& col)
 {

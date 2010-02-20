@@ -15,3 +15,4 @@
 #include "scoped_ptr.h"
 
 #include <d3dx10.h>
+#include <strstream>

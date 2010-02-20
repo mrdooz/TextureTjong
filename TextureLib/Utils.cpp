@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Utils.hpp"
 #include "Texture.hpp"
+#include <tchar.h>
 
 #define BITMAP_SIGNATURE 'MB'
 
@@ -71,4 +72,12 @@ void save_bitmap(const char* filename, const Texture& t)
 
   delete[](xchg_null(bmp));
 
+}
+
+std::ostream& operator<<(std::ostream& os, const D3DXCOLOR& col)
+{
+  TCHAR buf[256];
+  _stprintf(buf, _T("[0x%.2x%.2x%.2x%.2x]"), (uint32_t)(255 * col.r), (uint32_t)(255 * col.g), (uint32_t)(255 * col.b), (uint32_t)(255 * col.a));
+  os << buf;
+  return os;
 }

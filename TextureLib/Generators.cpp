@@ -11,6 +11,10 @@ void single_color(const D3DXCOLOR& col, Texture* t)
   for (int i = 0, e = t->width() * t->height(); i != e; ++i) {
     *p++ = col;
   }
+
+  std::strstream os;
+  os << "single_color " << col;
+  t->name(os.str());
 }
 
 void split_color(const D3DXCOLOR& a, const D3DXCOLOR& b, const float ratio, Texture* t)
@@ -27,6 +31,9 @@ void split_color(const D3DXCOLOR& a, const D3DXCOLOR& b, const float ratio, Text
     *p++ = b_col;
   }
 
+  std::strstream os;
+  os << "split_color(" << a << ", " << b << ", " << ratio << ")";
+  t->name(os.str());
 }
 
 void radial(const float radius, Texture *t)
@@ -45,4 +52,11 @@ void radial(const float radius, Texture *t)
 
     }
   }
+
+  std::strstream os;
+  os << "radial(" << radius << ")";
+  t->name(os.str());
+
 }
+
+

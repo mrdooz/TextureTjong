@@ -23,12 +23,15 @@ public:
   D3DXCOLOR at(const float x, const float y) const;
   void set_pixel(const int32_t x, const int32_t y, const D3DXCOLOR& col);
 
+  const std::string& name() const { return _name; }
+  void name(const std::string& name) { _name = name; }
 private:
   DWORD* ptr(const int32_t x, const int32_t y);
 
   void init();
   void assign(const Texture& t);
 
+  std::string _name;
   uint8_t *_data;
   int32_t _width;
   int32_t _height;

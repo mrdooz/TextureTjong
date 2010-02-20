@@ -252,6 +252,18 @@ uint8_t* flip(const Texture* t)
   return (uint8_t*)p;
 }
 
+void fill_bitmap_info(const Texture* t, BITMAPINFO* info)
+{
+  ZeroMemory(info, sizeof(*info));
+  info->bmiHeader.biSize = sizeof(info->bmiHeader);
+  info->bmiHeader.biWidth = t->width();
+  info->bmiHeader.biHeight = t->height();
+  info->bmiHeader.biPlanes = 1;
+  info->bmiHeader.biBitCount = 32;
+  info->bmiHeader.biCompression = BI_RGB;
+
+}
+
 void paint_single_texture(HWND hwnd)
 {
   PAINTSTRUCT ps;
@@ -259,18 +271,17 @@ void paint_single_texture(HWND hwnd)
 
   if (selected_texture) {
     BITMAPINFO bm_info;
-    ZeroMemory(&bm_info, sizeof(bm_info));
-    bm_info.bmiHeader.biSize = sizeof(bm_info.bmiHeader);
-    bm_info.bmiHeader.biWidth = selected_texture->width();
-    bm_info.bmiHeader.biHeight = selected_texture->height();
-    bm_info.bmiHeader.biPlanes = 1;
-    bm_info.bmiHeader.biBitCount = 32;
-    bm_info.bmiHeader.biCompression = BI_RGB;
+    fill_bitmap_info(selected_texture, &bm_info);
 
     uint8_t* flipped = flip(selected_texture);
     SetDIBitsToDevice(dc, 0, 0, selected_texture->width(), selected_texture->height(), 0, 0, 0, 
       selected_texture->height(), flipped, &bm_info, DIB_RGB_COLORS);
     delete[] (xchg_null(flipped));
+
+    RECT client_rect;
+    GetClientRect(hwnd, &client_rect);
+
+    DrawTextA(dc, selected_texture->name().c_str(), -1, &client_rect, DT_LEFT);
   }
 
   EndPaint(hwnd, &ps);

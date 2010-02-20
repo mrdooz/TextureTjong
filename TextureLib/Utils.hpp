@@ -26,4 +26,6 @@ T cosine_interpolate(const T& a, const T& b, const float t)
 class Texture;
 void save_bitmap(const char* filename, const Texture& t);
 
+std::ostream& operator<<(std::ostream& os, const D3DXCOLOR& col);
+
 #endif

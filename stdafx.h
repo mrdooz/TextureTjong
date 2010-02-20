@@ -23,3 +23,6 @@
 
 #include <boost/python.hpp>
 #include <stdint.h>
+
+#include <vector>
+#include <cassert>

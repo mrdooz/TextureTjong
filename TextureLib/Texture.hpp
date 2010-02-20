@@ -37,8 +37,8 @@ private:
 inline D3DXCOLOR Texture::at(const float x, const float y) const
 {
   // TOOD: We should really lerp here
-  const int int_x = clamp(x, 0.f, 1.f) * (_width - 1);
-  const int int_y = clamp(y, 0.f, 1.f) * (_height - 1);
+  const int int_x = (int)(clamp(x, 0.f, 1.f) * (_width - 1));
+  const int int_y = (int)(clamp(y, 0.f, 1.f) * (_height - 1));
 
   return D3DXCOLOR(*((uint32_t*)_data + int_x + int_y * _width));
 }

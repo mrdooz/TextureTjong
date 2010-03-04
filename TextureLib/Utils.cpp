@@ -81,3 +81,17 @@ std::ostream& operator<<(std::ostream& os, const D3DXCOLOR& col)
   os << buf;
   return os;
 }
+
+float color_to_monochrome(const D3DXCOLOR& c)
+{
+	return c.r * 0.3f + c.g * 0.59f + c.b * 0.1f;
+}
+
+DWORD make_col(const float r, const float g, const float b)
+{
+	const uint32_t cr = (uint32_t)(255*clamp(r, 0.f, 1.f));
+	const uint32_t cg = (uint32_t)(255*clamp(g, 0.f, 1.f));
+	const uint32_t cb = (uint32_t)(255*clamp(b, 0.f, 1.f));
+
+	return cr << 16 | cg << 8 | cb;
+}

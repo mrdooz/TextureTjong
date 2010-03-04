@@ -281,7 +281,7 @@ void paint_single_texture(HWND hwnd)
     RECT client_rect;
     GetClientRect(hwnd, &client_rect);
 
-    DrawTextA(dc, selected_texture->name().c_str(), -1, &client_rect, DT_LEFT);
+    //DrawTextA(dc, selected_texture->name().c_str(), -1, &client_rect, DT_LEFT);
   }
 
   EndPaint(hwnd, &ps);
@@ -314,12 +314,14 @@ void paint_thumbnails(HWND hwnd)
     }
 
     const Texture* t = textures[i];
-    uint8_t* downsampled = downsample_and_flip(t, thumbnail_size, thumbnail_size);
-    SetDIBitsToDevice(hDC, x_pos, y_pos, thumbnail_size, thumbnail_size, 0, 0, 0, thumbnail_size, downsampled, &bm_info, DIB_RGB_COLORS);
-    thumbnails.push_back(ThumbNail(x_pos, y_pos, thumbnail_size, t));
-    delete [] downsampled;
+		if (t->data()) {
+			uint8_t* downsampled = downsample_and_flip(t, thumbnail_size, thumbnail_size);
+			SetDIBitsToDevice(hDC, x_pos, y_pos, thumbnail_size, thumbnail_size, 0, 0, 0, thumbnail_size, downsampled, &bm_info, DIB_RGB_COLORS);
+			thumbnails.push_back(ThumbNail(x_pos, y_pos, thumbnail_size, t));
+			delete [] downsampled;
+			x_pos += thumbnail_size + spacing;
+		}
 
-    x_pos += thumbnail_size + spacing;
 
   }
 
@@ -377,6 +379,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
   case WM_RELOAD:
     {
       char* name = (char*)wParam;
+			// Clear the textures on reload
+			textures.clear();
+			selected_texture = NULL;
 
       try {
         py::object ignored = py::exec_file(name, main_namespace, main_namespace);
@@ -385,10 +390,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
         PyErr_Clear();
       }
 
-      if (!textures.empty()) {
-        InvalidateRect(main_window, NULL, FALSE);
-        InvalidateRect(texture_window, NULL, FALSE);
-      }
+      InvalidateRect(main_window, NULL, TRUE);
+      InvalidateRect(texture_window, NULL, TRUE);
 
       delete [] name;
     }
@@ -474,7 +477,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   set_texture_init(texture_create);
   set_texture_close(texture_delete);
 
-  filename = "1.py";
+  filename = "demo.py";
   WatcherThreadParams params;
 
   DWORD thread_id;

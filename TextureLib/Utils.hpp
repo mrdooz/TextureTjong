@@ -23,6 +23,11 @@ T cosine_interpolate(const T& a, const T& b, const float t)
   return linear_interpolate(a, b, f);
 }
 
+float color_to_monochrome(const D3DXCOLOR& c);
+
+DWORD make_col(const float r, const float g, const float b);
+
+
 class Texture;
 void save_bitmap(const char* filename, const Texture& t);
 

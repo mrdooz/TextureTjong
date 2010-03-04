@@ -5,11 +5,6 @@
 
 namespace
 {
-  float color_to_monochrome(const D3DXCOLOR& c)
-  {
-    return c.r * 0.3f + c.g * 0.59f + c.b * 0.1f;
-  }
-
 }
 
 void mixer(const Texture *a, const Texture *b, const float ratio, Texture *out)
@@ -85,4 +80,39 @@ void remap(const Texture *a, const D3DXCOLOR& start_color, const D3DXCOLOR& end_
     }
     y_acc += y_inc;
   }
+}
+
+void combine(const Texture *r, const Texture *g, const Texture* b, const Texture* out)
+{
+	const float x_inc = 1 / (float)(out->width() - 1);
+	const float y_inc = 1 / (float)(out->height() - 1);
+
+	DWORD* dst = (DWORD*)out->data();
+	float y_acc = 0;
+	for (int32_t i = 0, e = out->height(); i < e; ++i) {
+		float x_acc = 0;
+		for (int32_t j = 0, f = out->width(); j < f; ++j) {
+			*dst++ = make_col(r->at(x_acc, y_acc), g->at(x_acc, y_acc), b->at(x_acc, y_acc));
+			x_acc += x_inc;
+		}
+		y_acc += y_inc;
+	}
+}
+
+void scale(const Texture* t, const float s, const Texture* out)
+{
+	const float x_inc = 1 / (float)(out->width() - 1);
+	const float y_inc = 1 / (float)(out->height() - 1);
+
+	DWORD* dst = (DWORD*)out->data();
+	float y_acc = 0;
+	for (int32_t i = 0, e = out->height(); i < e; ++i) {
+		float x_acc = 0;
+		for (int32_t j = 0, f = out->width(); j < f; ++j) {
+			*dst++ = make_col(s * t->at(x_acc, y_acc).r, s * t->at(x_acc, y_acc).g, s * t->at(x_acc, y_acc).b);
+			x_acc += x_inc;
+		}
+		y_acc += y_inc;
+	}
+
 }

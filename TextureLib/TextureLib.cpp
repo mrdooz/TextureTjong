@@ -28,9 +28,13 @@ BOOST_PYTHON_MODULE(texture_ext)
   def("single_color", single_color);
   def("split_color", split_color);
   def("radial", radial);
-  def("displace", displace);
-  def("remap", remap);
+	def("noise", noise);
 
+  def("displace", displace);
+	def("remap", remap);
+	def("combine", combine);
+	def("modulate", modulate);
+	def("scale", scale);
 
   def("mixer", mixer);
 
